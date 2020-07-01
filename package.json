@@ -1,0 +1,15 @@
+{
+  "name": "photo-share-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Xiaoqiang Wang <xq21@vip.qq.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "nodemon -e js,json,graphql"
+  },
+  "dependencies": {
+    "apollo-server": "^2.15.1",
+    "graphql": "^15.2.0",
+    "nodemon": "^2.0.4"
+  }
+}
