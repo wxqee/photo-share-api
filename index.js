@@ -18,11 +18,19 @@ const start = async () => {
     }
 
     const app = express()
-    const context = { db }
     const server = new ApolloServer({
         typeDefs,
         resolvers,
-        context,
+        context: async ({ req }) => {
+            const githubToken = req.headers.authorization;
+            const user = await db
+                .collection('users')
+                .findOne({ githubToken })
+            return {
+                db,
+                user,
+            }
+        },
     })
     server.applyMiddleware({ app })
 

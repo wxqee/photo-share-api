@@ -1,6 +1,7 @@
 const { photos } = require('./fixtures');
 
 const Query = {
+    me: (parent, args, { user }) => user,
     totalPhotos: async (parent, args, { db }) =>
         await db
             .collection('photos')
