@@ -1,9 +1,14 @@
 const utils = require('../utils')
 
 const Mutation = {
-    async postPhoto(parent, args, { db }) {
+    async postPhoto(parent, args, { db, user }) {
+        if (!user) {
+            throw new Error('only a authorized user can post a photo')
+        }
+
         const newPhoto = {
             ...args.input,
+            userID: user.githubLogin,
             created: new Date(),
         }
 
