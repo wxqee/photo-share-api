@@ -1,6 +1,19 @@
 const utils = require('../utils')
 
 const Mutation = {
+    async addFakeUsers(parent, { count }, { db }) {
+        const randomUsers = await utils.requestRandomUsers(count)
+        console.log(randomUsers);
+        const users = randomUsers.results
+            .map(r => ({
+                githubLogin: r.login.username,
+                name: `${r.name.first} ${r.name.last}`,
+                avatar: r.picture.thumbnail,
+                githubToken: r.login.sha1,
+            }))
+        const { ops } = await db.collection('users').insertMany(users)
+        return ops
+    },
     async postPhoto(parent, args, { db, user }) {
         if (!user) {
             throw new Error('only a authorized user can post a photo')

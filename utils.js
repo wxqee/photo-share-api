@@ -37,6 +37,14 @@ const authorizeWithGithub = async (credentials) => {
     }
 }
 
+const requestRandomUsers = async count =>
+    fetch(`https://randomuser.me/api/?results=${count}`)
+        .then(res => res.json())
+        .catch(error => {
+            throw new Error(JSON.stringify(error))
+        })
+
 module.exports = {
     authorizeWithGithub,
+    requestRandomUsers,
 }
