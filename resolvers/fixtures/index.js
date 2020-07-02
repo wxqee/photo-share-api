@@ -5,7 +5,6 @@ var users = [
 ]
 var photos = [
     {
-        id: "1",
         name: "Dropping the Heart Chute",
         description: "The heart chute is one of my favorite chutes",
         category: "ACTION",
@@ -13,14 +12,12 @@ var photos = [
         created: "3-28-1977",
     },
     {
-        id: "2",
         name: "Enjoying the sunshine",
         category: "SELFIE",
         githubUser: "sSchmidt",
         created: "1-2-1985",
     },
     {
-        id: "3",
         name: "Gunbarrel 25",
         description: "25 laps on gunbarrel today",
         category: "LANDSCAPE",
@@ -41,6 +38,14 @@ const fixtures = {
     photos,
     tags,
     _id,
+    async fakeDb(db) {
+        const photosCollection = db.collection('photos')
+        console.log(await photosCollection.countDocuments())
+        if (!await photosCollection.countDocuments()) {
+            const result = await photosCollection.insertMany(photos);
+            console.info(`${result.insertedCount} posts inserted.`);
+        }
+    }
 }
 
 module.exports = fixtures;

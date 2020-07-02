@@ -1,15 +1,18 @@
-const fixtures = require('./fixtures')
-const { photos } = fixtures
-
 const Mutation = {
-    postPhoto(parent, args) {
-        var newPhoto = {
-            id: fixtures._id++,
+    async postPhoto(parent, args, { db }) {
+        const newPhoto = {
             ...args.input,
             created: new Date(),
         }
-        photos.push(newPhoto)
-        return newPhoto
+
+        const result = await db
+            .collection('photos')
+            .insertOne(newPhoto)
+
+        return {
+            id: result.insertedId,
+            ...newPhoto,
+        }
     }
 };
 
