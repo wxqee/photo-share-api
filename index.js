@@ -1,20 +1,37 @@
+require('dotenv').config()
 const {ApolloServer} = require('apollo-server-express')
 const express = require('express')
 const expressPlayground = require('graphql-playground-middleware-express').default
 
 const typeDefs = require('fs').readFileSync('./schema.graphql', 'utf8')
-const resolvers = require('./resolvers');
+const resolvers = require('./resolvers')
+const { fakeDb } = require('./resolvers/fixtures')
 
-const app = express()
-const server = new ApolloServer({
-    typeDefs,
-    resolvers,
-})
-server.applyMiddleware({ app })
+const mongo = require('./mongo')
 
-app.get('/', (req, res) => res.end('Welcome to the PhotoShare API'))
-app.get('/playground', expressPlayground({ endpoint: '/graphql' }))
+const start = async () => {
+    const { db } = await mongo.connect()
 
-app.listen({ port: 4000 }, () => {
-    console.log(`GraphQL Server running @ http://localhost:4000${server.graphqlPath}`);
-})
+    if (process.env.NODE_ENV !== 'production') {
+        console.log('Preparing fake data...');
+        await fakeDb(db);
+    }
+
+    const app = express()
+    const context = { db }
+    const server = new ApolloServer({
+        typeDefs,
+        resolvers,
+        context,
+    })
+    server.applyMiddleware({ app })
+
+    app.get('/', (req, res) => res.end('Welcome to the PhotoShare API'))
+    app.get('/playground', expressPlayground({ endpoint: '/graphql' }))
+
+    app.listen({ port: 4000 }, () => {
+        console.log(`GraphQL Server running @ http://localhost:4000${server.graphqlPath}`);
+    })
+}
+
+start()
